@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import Paper from '@mui/material/Paper';
 import { Box, Grid, Typography } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Copyright from './copyrights/CopyRights';
@@ -17,6 +16,8 @@ const theme = createTheme();
 
 export default function SignInSide() {
     const { formData, setFormData, formErrors, setFormErrors, setCurrentPage } = useContext(AppContext)
+    const { name, position, expected_salary, address, phone, email, marital_status, availability_date, date_of_birth } = formErrors;
+
     const handleSubmit = (event) => {
         event.preventDefault();
         setCurrentPage(2)
@@ -33,6 +34,12 @@ export default function SignInSide() {
             e.target.value = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
         }
         if (name == 'availability_date' || name == "date_of_birth") {
+
+            if (e == null) {
+                setFormErrors({ ...formErrors, [name]: `${name} is required` })
+            } else {
+                setFormErrors({ ...formErrors, [name]: '' })
+            }
             setFormData({ ...formData, [name]: e });
         } else {
             setFormData({ ...formData, [e.target.name]: name == 'expected_salary' ? +e.target.value : e.target.value });
@@ -58,7 +65,7 @@ export default function SignInSide() {
                                             value={formData.name}
                                             handleChange={handleChange}
                                         />
-                                        <ErrorMessage value={formErrors.name} />
+                                        <ErrorMessage value={name} />
                                     </Grid>
 
                                     <Grid item xs={12}>
@@ -68,7 +75,7 @@ export default function SignInSide() {
                                             value={formData.position}
                                             handleChange={handleChange}
                                         />
-                                        <ErrorMessage value={formErrors.position} />
+                                        <ErrorMessage value={position} />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <CustomInput
@@ -85,6 +92,7 @@ export default function SignInSide() {
                                             handleChange={handleChange}
                                             label="Availability Date"
                                         />
+                                        <ErrorMessage value={availability_date} />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <Datepicker
@@ -93,6 +101,7 @@ export default function SignInSide() {
                                             handleChange={handleChange}
                                             label="Date Of Birth"
                                         />
+                                        <ErrorMessage value={date_of_birth} />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <CustomInput
@@ -101,7 +110,7 @@ export default function SignInSide() {
                                             value={formData.address}
                                             handleChange={handleChange}
                                         />
-                                        <ErrorMessage value={formErrors.address} />
+                                        <ErrorMessage value={address} />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <CustomInput
@@ -110,7 +119,7 @@ export default function SignInSide() {
                                             value={formData.phone}
                                             handleChange={handleChange}
                                         />
-                                        <ErrorMessage value={formErrors.phone} />
+                                        <ErrorMessage value={phone} />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <CustomInput
@@ -119,7 +128,7 @@ export default function SignInSide() {
                                             value={formData.email}
                                             handleChange={handleChange}
                                         />
-                                        <ErrorMessage value={formErrors.email} />
+                                        <ErrorMessage value={email} />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <SelectMarital
@@ -129,7 +138,23 @@ export default function SignInSide() {
                                     </Grid>
                                 </Grid>
 
-                                <Button type="submit" variant="contained" sx={submitBtnStyle} className="btn-three">
+                                <Button
+                                    disabled={
+                                        Object.keys(formErrors).length == 0
+                                        || name !== ''
+                                        || position !== ''
+                                        || (expected_salary !== '' || formData.expected_salary == 0)
+                                        || address !== ''
+                                        || phone !== ''
+                                        || email !== ''
+                                        || marital_status !== ''
+                                        || !!(availability_date)
+                                        || !!(date_of_birth)
+                                    }
+                                    type="submit"
+                                    variant="contained"
+                                    sx={submitBtnStyle}
+                                    className="btn-three">
                                     Submit Application
                                 </Button>
                                 <Copyright sx={{ mt: 5 }} />
